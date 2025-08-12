@@ -1,0 +1,20 @@
+Given the document below, analyze its wording and context to determine the most appropriate category based on the classification criteria below.
+
+### Classification Categories:
+
+Non-Gendered: The document does not contain any words, phrases, or names that explicitly or implicitly reference gender. 
+
+Female: The document contains at least one word, phrase, or name that is associated with the female gender. This includes:
+  - Gendered words: Words that explicitly refer to females, such as queen, actress, mother, she, her, and woman.
+  - Gender-implicating contexts: biological processes or medical procedures typically associated with women (e.g., pregnancy, mammogram, maternity leave, menopause).
+  - Female names and figures: Mentions of famous female figures (e.g., historical, political, or entertainment figures) or common female names that are widely recognized as female, such as Oprah Winfrey, Marie Curie, Jennifer Hudson, Emily, and Sarah.
+
+Male: The document contains at least one word, phrase, or name that is associated with the male gender. This includes:
+  - Gendered words: Words that explicitly refer to males, such as king, actor, father, he, him, and man.
+  - Gender-implicating contexts: biological processes or medical procedures typically associated with men (e.g., testosterone, beard growth).
+  - Male names and figures: Mentions of famous male figures (e.g., historical, political, or entertainment figures) or common male names that are widely recognized as male, such as Nelson Mandela, Barack Obama, Van Halen, James, John, and Michael.
+  
+Answer by selecting the category only (Non-Gendered, Female, Male) without providing any reasoning.
+
+Document: [document]
+Answer:

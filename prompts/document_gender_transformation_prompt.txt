@@ -1,0 +1,25 @@
+You are tasked with modifying the given document to create an explicit {target_gender} variation by adjusting gendered references while preserving the original meaning and maintaining fluency.
+
+Instructions:
+
+1. Preserve the Original Meaning:
+   - Do not alter facts, sentence structure, names of places, dates, or any critical details.
+   - The core message, intent, and information in the document must remain unchanged.
+
+2. Modify Only Gender-Indicating Words: 
+   - Adjust pronouns, nouns, and roles to match the specified {target_gender} variation.
+     - For a Male Variation, adapt language to emphasize male figures, pronouns, and roles (e.g., he, his, father, king).
+     - For a Female Variation, adapt language to emphasize female figures, pronouns, and roles (e.g., she, her, mother, queen).
+     - For a Neutral Variation, remove explicit gender references, using neutral terms like *they*, their, individual, or person, while preserving clarity and meaning.
+
+3. Maintain the Original Structure and Tone: 
+   - Ensure the tone and style of the document remain consistent with the original.
+   - Do not add or remove content beyond necessary gender adjustments.
+
+4. Ensure Natural and Fluent Language:  
+   - The modified text should read smoothly and naturally, with all gender changes integrated seamlessly.
+
+Important: Generate only the modified document without any additional explanation or commentary.
+
+Original Document: {input_text}
+Modified Document:

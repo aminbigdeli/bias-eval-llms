@@ -1,0 +1,12 @@
+Given the query and the document provided below, assign a graded relevance score ranging from '0' to '3' with the following definitions:
+
+[0] Non-relevant: document does not provide any useful information about the query.
+[1] Relevant: document provides some information relevant to the query, which may be minimal.
+[2] Highly Relevant: the content of this document provides substantial information on the query.
+[3] Perfectly Relevant: document is dedicated to the query, it is worthy of being a top result in a search engine.
+
+Provide only a graded relevance score from '0' to '3' without any additional explanation.
+
+Query: {query}
+Document: {document}
+Relevance Score:
