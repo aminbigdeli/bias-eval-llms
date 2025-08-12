@@ -1,204 +1,206 @@
-# Bias Evaluation for Large Language Models
+# Assessing Gender Bias in Information Retrieval Tasks Using Large Language Models
 
-A comprehensive toolkit for evaluating gender bias and fairness in Large Language Models (LLMs) across multiple providers including OpenAI, Anthropic, and Ollama.
+This repository provides the data, code, and resources for our research on automated gender bias assessment in Information Retrieval (IR) using Large Language Models (LLMs). Our framework evaluates LLMs across five key bias assessment tasks: query gender classification, relevance scoring with bias minimization, gender-specific document generation, fair document ranking, and retrieval performance disparity mitigation. All code for conducting these bias assessments and the accompanying evaluation scripts are included here.
 
-## 🏗️ Project Structure
+## Data
+
+The `data/` directory contains the evaluation datasets and resources needed for gender bias assessment:
 
 ```
-organized_repo/
-├── code/                    # Core evaluation scripts
-├── data/                    # Input datasets and LIWC resources
-├── prompts/                 # LLM prompt templates
-├── results/                 # Experimental outputs per model
-├── config/                  # Model configurations
-└── docs/                    # Documentation
+data/
+├── gender_annotated_queries.tsv    # Human-labeled queries with gender associations (m/f/n)
+├── Grep_bias_datasets/             # Query-document pairs for relevance and transformation tasks
+│   ├── queries-documents_appearance.csv
+│   ├── queries-documents_career.csv
+│   └── ...
+├── 215_neutral_queries.tsv    # Neutral query set from MSMARCOFair, used to evaluate gender bias in the retrieval results for these queries
+
 ```
 
-## 📊 Data
-
-### Input Datasets
-- **`data/gender_annotated_queries.tsv`** - Queries with human gender labels (m/f/n) for gender annotation evaluation
-- **`data/Grep_bias_datasets/`** - CSV files containing query-document pairs for relevance scoring and gender transformation tasks
-
-### LIWC Resources
-- **`data/liwc/`** - LIWC dictionary files and pre-computed document bias scores for linguistic bias analysis
+- **`gender_annotated_queries.tsv`**: Contains queries with human-annotated gender labels for evaluating LLM classification accuracy
+- **`Grep_bias_datasets/`**: Contains CSV files with query-document pairs for relevance scoring and gender transformation experiments
+- **`215_neutral_queries.tsv`**: Contains neutral query set from MSMARCOFair, used to evaluate gender bias in the retrieval results for these queries
 
 ## 🤖 Prompts
 
-All prompts are stored as text files in the `prompts/` directory:
+The `prompts/` directory contains templates for each bias assessment task and shared instruction sets:
+```
+prompts/
+├── query_gender_annotation_prompt.txt           # Template for query gender classification
+├── relevance_annotation_prompt.txt              # Template for relevance scoring (0-3 scale)
+├── document_gender_transformation_prompt.txt    # Template for gender transformation (M→F, F→M, etc.)
+├── document_gender_annotation_prompt.txt        # Template for gender quantification in documents
+└── fair_ranking_prompt.txt                      # Template for fair document ranking using RankGPT
+```
 
-- **`query_gender_annotation_prompt.txt`** - Classifies queries as Female, Male, or Non-Gendered
-- **`relevance_annotation_prompt.txt`** - Scores query-document relevance (0-3 scale)
-- **`document_gender_transformation_prompt.txt`** - Transforms document gender (M→F, F→M, etc.)
-- **`document_gender_annotation_prompt.txt`** - Quantifies gender in transformed documents
-- **`fair_ranking_prompt.txt`** - Fair ranking prompts for RankGPT model
+Each .txt file contains the prompt to perform a specific bias assessment task.
 
 ## 🚀 Usage
 
-### Prerequisites
+### Cloning and Setup
 
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+**Clone the repository**
+```bash
+git clone https://github.com/yourusername/gender-bias-ir-llms.git
+cd gender-bias-ir-llms
+```
 
-2. **Set up API keys:**
-   ```bash
-   export OPENAI_API_KEY="your_openai_key"
-   export ANTHROPIC_API_KEY="your_anthropic_key"
-   ```
+**Create a Python environment**
+```bash
+conda create -n gender-bias-env python=3.9 -y
+conda activate gender-bias-env
+pip install -r requirements.txt
+```
 
-3. **Configure models** in `config/models.json`
+**Set up API keys**
+```bash
+export OPENAI_API_KEY="your_openai_key"
+export ANTHROPIC_API_KEY="your_anthropic_key"
+```
+
+**Configure models** in `config/models.json`
 
 ### Core Scripts
 
-#### 1. Query Gender Annotation
+
+### Query Gender Classification
 ```bash
-python code/query_gender_annotator.py --provider openai --model chatgpt-4o-latest
-```
-- **Purpose**: Classifies queries by gender using LLMs
-- **Output**: Results saved to `results/query_gender_annotation/{model}/`
-- **Metrics**: Accuracy, F1-scores, Cohen's Kappa
+# Example: Classify query gender using GPT-4o (OpenAI)
+python code/query_gender_annotator.py \
+  --provider openai \
+  --model chatgpt-4o-latest \
+  --data_path data/gender_annotated_queries.tsv \
+  --output_dir results/query_gender_annotation
 
-#### 2. Relevance Annotation
+# Example: Classify query gender using Claude (Anthropic)
+python code/query_gender_annotator.py \
+  --provider anthropic \
+  --model claude-3-haiku-20240307 \
+  --data_path data/gender_annotated_queries.tsv \
+  --output_dir results/query_gender_annotation
+```
+
+### Relevance Scoring with Bias Minimization
 ```bash
-python code/relevance_annotator.py --provider anthropic --model claude-3-haiku-20240307 --dataset your_dataset.csv
-```
-- **Purpose**: Scores query-document relevance (0-3 scale)
-- **Output**: CSV files with `llm_relevance_score` column added
-- **Data**: Reads from `data/Grep_bias_datasets/`
+# Example: Score relevance using Claude with bias awareness
+python code/relevance_annotator.py \
+  --provider anthropic \
+  --model claude-3-haiku-20240307 \
+  --dataset your_dataset.csv \
+  --save_interval 100
 
-#### 3. Document Gender Transformation
+# Example: Score relevance using local Ollama model
+python code/relevance_annotator.py \
+  --provider ollama \
+  --model phi4:latest \
+  --dataset your_dataset.csv
+```
+
+### Document Gender Transformation
 ```bash
-python code/document_gender_transformation.py --provider ollama --model phi4:latest --dataset your_dataset.csv
-```
-- **Purpose**: Transforms document gender and evaluates quality
-- **Output**: Results saved to `results/document_gender_transformation/{model}/`
-- **Metrics**: BLEU, ROUGE, BERTScore
+# Example: Generate gender variants using GPT-4o
+python code/document_gender_transformation.py \
+  --provider openai \
+  --model chatgpt-4o-latest \
+  --dataset your_dataset.csv
 
-#### 4. Document Gender Quantification
+# Example: Generate gender variants using local Ollama model
+python code/document_gender_transformation.py \
+  --provider ollama \
+  --model llama3.3:latest \
+  --dataset your_dataset.csv
+```
+
+### Document Gender Quantification
 ```bash
-python code/document_gender_annotator.py --provider openai --base_dir results/document_gender_transformation
-```
-- **Purpose**: Quantifies gender in transformed documents
-- **Output**: Adds `quantified_gender` column to transformation results
+# Example: Quantify gender in transformed documents using GPT-4o
+python code/document_gender_annotator.py \
+  --provider openai \
+  --base_dir results/document_gender_transformation
 
-#### 5. LIWC Bias Analysis
+# Example: Quantify gender using Claude
+python code/document_gender_annotator.py \
+  --provider anthropic \
+  --base_dir results/document_gender_transformation
+```
+
+### LIWC Bias Analysis
 ```bash
-python code/calculate_liwc_scores.py --trec_file your_run_file.run --liwc_dict data/liwc/liwccollection_bias.pkl
+# Example: Calculate LIWC bias scores from TREC run files
+python code/calculate_liwc_scores.py \
+  --trec_file your_run_file.run \
+  --liwc_dict data/liwc/liwccollection_bias.pkl \
+  --cutoff 10 \
+  --output results/liwc_analysis.csv
 ```
-- **Purpose**: Calculates linguistic bias scores from TREC run files
-- **Output**: CSV with female, male, and neutral LIWC scores
 
-### Model Providers
+### Evaluating Model Performance
+```bash
+# List available models for a provider
+python code/query_gender_annotator.py --provider openai --list_models
 
-- **OpenAI**: `chatgpt-4o-latest`
-- **Anthropic**: `claude-3-haiku-20240307`
-- **Ollama**: `phi4:latest`, `llama3.3:latest`, `qwen2.5:72b`
+# List available datasets
+python code/relevance_annotator.py --list_datasets
 
-## 📁 Results Structure
+# List available models for relevance annotation
+python code/relevance_annotator.py --provider anthropic --list_models
+```
 
-Each evaluation type creates model-specific subfolders:
+## Results
+
+The `results/` directory contains evaluation outputs organized by task and model:
 
 ```
 results/
-├── query_gender_annotation/
-│   ├── chatgpt-4o-latest/
-│   ├── claude-3-haiku-20240307/
-│   ├── phi4:latest/
+├── query_gender_annotation/           # Query gender classification results
+│   ├── chatgpt-4o-latest/            # GPT-4o results with performance metrics
+│   ├── claude-3-haiku-20240307/      # Claude results with performance metrics
+│   ├── phi4:latest/                  # Phi-4 results with performance metrics
+│   ├── llama3.3:latest/              # LLaMA results with performance metrics
+│   └── qwen2.5:72b/                  # Qwen results with performance metrics
+├── relevance/                         # Relevance scoring results
+│   ├── chatgpt-4o-latest/            # Model-specific subfolders
+│   ├── claude-3-haiku-20240307/      # Each containing CSV files with llm_relevance_score
+│   ├── phi4:latest/                  # and progress tracking
 │   ├── llama3.3:latest/
 │   └── qwen2.5:72b/
-├── relevance/
-│   ├── chatgpt-4o-latest/
-│   ├── claude-3-haiku-20240307/
-│   ├── phi4:latest/
-│   ├── llama3.3:latest/
-│   └── qwen2.5:72b/
-└── document_gender_transformation/
-    ├── chatgpt-4o-latest/
-    ├── claude-3-haiku-20240307/
-    ├── phi4:latest/
+└── document_gender_transformation/    # Gender transformation results
+    ├── chatgpt-4o-latest/            # Model-specific subfolders
+    ├── claude-3-haiku-20240307/      # Each containing transformation results
+    ├── phi4:latest/                  # with BLEU, ROUGE, and BERTScore metrics
     ├── llama3.3:latest/
     └── qwen2.5:72b/
 ```
 
-## 🔧 Configuration
+## Evaluation Metrics
 
-### Models Configuration (`config/models.json`)
-```json
-{
-  "openai": {
-    "models": ["chatgpt-4o-latest"]
-  },
-  "anthropic": {
-    "models": ["claude-3-haiku-20240307"]
-  },
-  "ollama": {
-    "models": ["phi4:latest", "llama3.3:latest", "qwen2.5:72b"]
-  }
-}
-```
-
-## 📈 Evaluation Metrics
-
-### Gender Annotation
-- **Accuracy**: Overall classification accuracy
+### Gender Classification
+- **Accuracy**: Overall classification accuracy across all queries
 - **F1-Scores**: Per-category F1 scores (Female, Male, Neutral)
 - **Cohen's Kappa**: Agreement between human and LLM labels
+- **Confusion Matrix**: Detailed classification performance visualization
 
 ### Relevance Scoring
 - **Scale**: 0 (not relevant) to 3 (highly relevant)
-- **Output**: Added as `llm_relevance_score` column
+- **Bias Awareness**: Relevance scores assigned while minimizing gender bias
+- **Output**: Added as `llm_relevance_score` column to original datasets
 
 ### Document Transformation
-- **BLEU Score**: Translation quality metric
-- **ROUGE Scores**: ROUGE-1, ROUGE-2, ROUGE-L
+- **BLEU Score**: Translation quality metric for gender variants
+- **ROUGE Scores**: ROUGE-1, ROUGE-2, ROUGE-L for content similarity
 - **BERTScore**: BERT-based semantic similarity (Precision, Recall, F1)
+- **Gender Preservation**: Assessment of gender transformation accuracy
 
 ### LIWC Analysis
-- **Female Score**: Female-related linguistic content
-- **Male Score**: Male-related linguistic content
-- **Neutral Score**: Gender-neutral content
-- **Bias Difference**: Female - Male score difference
+- **Female Score**: Female-related linguistic content percentage
+- **Male Score**: Male-related linguistic content percentage
+- **Neutral Score**: Gender-neutral content percentage
+- **Bias Difference**: Female - Male score difference for bias quantification
 
-## 🛠️ Development
+## Model Support
 
-### Adding New Models
-1. Add model name to `config/models.json`
-2. Ensure model is available in the specified provider
-3. Run evaluation scripts with the new model
+Our framework supports multiple LLM providers:
 
-### Adding New Prompts
-1. Create prompt file in `prompts/` directory
-2. Update relevant script to load the new prompt
-3. Test with sample data
-
-### Custom Datasets
-1. Place CSV files in `data/Grep_bias_datasets/`
-2. Ensure required columns are present
-3. Use `--dataset` flag to specify file
-
-## 📋 Requirements
-
-- Python 3.8+
-- See `requirements.txt` for full dependency list
-- LIWC dictionary files for bias analysis
-- API access to OpenAI, Anthropic, or local Ollama instance
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test with existing datasets
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📚 References
-
-- LIWC (Linguistic Inquiry and Word Count) for linguistic bias analysis
-- BLEU, ROUGE, and BERTScore for text quality evaluation
-- TREC evaluation framework for information retrieval assessment
+- **OpenAI**
+- **Anthropic**
+- **Ollama**
