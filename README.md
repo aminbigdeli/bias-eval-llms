@@ -152,24 +152,33 @@ The `results/` directory contains evaluation outputs organized by task and model
 
 ```
 results/
-├── query_gender_annotation/           # Query gender classification results
-│   ├── chatgpt-4o-latest/            # GPT-4o results with performance metrics
-│   ├── claude-3-haiku-20240307/      # Claude results with performance metrics
-│   ├── phi4:latest/                  # Phi-4 results with performance metrics
-│   ├── llama3.3:latest/              # LLaMA results with performance metrics
-│   └── qwen2.5:72b/                  # Qwen results with performance metrics
-├── relevance/                         # Relevance scoring results
-│   ├── chatgpt-4o-latest/            # Model-specific subfolders
-│   ├── claude-3-haiku-20240307/      # Each containing CSV files with llm_relevance_score
-│   ├── phi4:latest/                  # and progress tracking
+├── query_gender_annotation/            # Query gender classification results
+│   ├── chatgpt-4o-latest/              # GPT-4o results with performance metrics
+│   ├── claude-3-haiku-20240307/        # Claude results with performance metrics
+│   ├── phi4:latest/                    # Phi-4 results with performance metrics
+│   ├── llama3.3:latest/                # LLaMA results with performance metrics
+│   └── qwen2.5:72b/                    # Qwen results with performance metrics
+├── relevance/                          # Relevance scoring results
+│   ├── chatgpt-4o-latest/              # Model-specific subfolders
+│   ├── claude-3-haiku-20240307/        # Each containing CSV files with llm_relevance_score
+│   ├── phi4:latest/                    # and progress tracking
 │   ├── llama3.3:latest/
 │   └── qwen2.5:72b/
-└── document_gender_transformation/    # Gender transformation results
-    ├── chatgpt-4o-latest/            # Model-specific subfolders
-    ├── claude-3-haiku-20240307/      # Each containing transformation results
-    ├── phi4:latest/                  # with BLEU, ROUGE, and BERTScore metrics
-    ├── llama3.3:latest/
-    └── qwen2.5:72b/
+├── document_gender_transformation/     # Gender transformation results
+│   ├── chatgpt-4o-latest/              # Model-specific subfolders
+│   ├── claude-3-haiku-20240307/        # Each containing transformation results
+│   ├── phi4:latest/                    # with BLEU, ROUGE, and BERTScore metrics
+│   ├── llama3.3:latest/
+│   └── qwen2.5:72b/
+└── reranked_runs/                      # Re-ranked list of documents with LLMs
+    ├── 215_neutral_queries/            # Ranked list of documents for 215 neutral queries
+    │   ├── chatgpt-4o-latest/          # GPT-4o ranked list of documents
+    │   ├── claude-3-haiku-20240307/    # Claude ranked list of documents
+    │   ├── phi4:latest/                # Phi-4 ranked list of documents
+    │   ├── llama3.3:latest/            # LLaMA ranked list of documents
+    │   └── qwen2.5:72b/                # Qwen ranked list of documents
+    └── gendered_queries/               # Ranked list of documents for female and male queries using GPT-4o
+
 ```
 
 ## Evaluation Metrics
