@@ -124,7 +124,7 @@ python code/document_gender_annotator.py \
   --base_dir results/document_gender_transformation
 ```
 
-### LIWC Bias Analysis
+### LIWC Bias Measurement
 ```bash
 # Example: Calculate LIWC bias scores from TREC run files
 python code/calculate_liwc_scores.py \
@@ -132,6 +132,29 @@ python code/calculate_liwc_scores.py \
   --liwc_dict data/liwc/liwccollection_bias.pkl \
   --cutoff 10 \
   --output results/liwc_analysis.csv
+```
+
+### ARaB Bias Measurement
+To calculate the ARaB metrics, first run [documents_calculate_bias.py](https://github.com/navid-rekabsaz/GenderBias_IR/blob/master/step1_calculate_bias_documents.ipynb) to compute the bias of each document in the collection. Next, [run step2_calculate_bias_runs.ipynb](https://github.com/navid-rekabsaz/GenderBias_IR/blob/master/step2_calculate_bias_runs.ipynb), and finally execute [step3_bias_metrics.ipynb](https://github.com/navid-rekabsaz/GenderBias_IR/blob/master/step3_bias_metrics.ipynb).
+
+### NFaiRR Fairness Measurement
+For calculating the NFaiR metric, you need to run the following commands as mentioned in the [NFaiRR GitHub repository](https://github.com/CPJKU/FairnessRetrievalResults).
+
+Calculating Document Neutrality Scores
+```bash
+python3 calc_documents_neutrality.py \
+  --collection-path [PATH_TO_TSV_COLLECTION] \
+  --representative-words-path ../resources/wordlist_gender_representative.txt \
+  --threshold 1 \
+  --out-file processed/collection_neutralityscores.tsv
+  ```
+
+Calculating Model Fairness
+```bash
+python metrics_fairness.py \
+  --collection-neutrality-path processed/collection_neutralityscores.tsv \
+  --backgroundrunfile BM25.trec \
+  --runfile chatgpt-4o-latest/RankGPT_fair_prompt_run.trec
 ```
 
 ### Evaluating Model Performance
